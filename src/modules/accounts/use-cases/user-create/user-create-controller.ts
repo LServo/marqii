@@ -8,12 +8,12 @@ import type { DTOUserCreateController } from "./user-create.types.js";
 
 class UserCreateController extends Controller {
 	async handle(
-		input: DTOUserCreateController.Input,
+		request: DTOUserCreateController.Input,
 	): Promise<DTOUserCreateController.Output> {
 		SaveLogs.ControllerTitle("UserCreateController (execute)");
 
-		await this.validateInput(input);
-		const { name, email, birthDate } = input;
+		await this.validateInput(request);
+		const { name, email, birthDate } = request;
 
 		const userCreateUseCase = container.resolve(UserCreateUseCase);
 

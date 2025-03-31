@@ -1,29 +1,49 @@
-// import { container } from "tsyringe";
+import { container } from "tsyringe";
 
-// import { Controller, type HttpResponse, ok } from "@/shared/application";
-// import { SaveLogs } from "@/shared/application/save-logs";
+import {
+	Controller,
+	type HttpResponse,
+	ok,
+} from "@/shared/application/index.js";
+import { SaveLogs } from "@/shared/application/save-logs.js";
 
-// import { AuthenticateUseCase } from "./authenticate-use-case";
-// import type { DTOAuthenticateController } from "./authenticate.types";
+import { zodValidation } from "@/utils/zod-validation.js";
+import { z } from "zod";
+import { AuthenticateUseCase } from "./authenticate-use-case.js";
+import type { DTOAuthenticateController } from "./authenticate.types.js";
 
-// class AuthenticateController extends Controller {
-// 	async handle(
-// 		request: DTOAuthenticateController.Input,
-// 	): Promise<HttpResponse> {
-// 		SaveLogs.ControllerTitle("AuthenticateController (handle)");
+class AuthenticateController extends Controller {
+	async handle(
+		request: DTOAuthenticateController.Input,
+	): Promise<HttpResponse> {
+		SaveLogs.ControllerTitle("AuthenticateController (handle)");
 
-// 		const { email, password } = request;
+		await this.validateInput(request);
+		const { email, password } = request;
 
-// 		const authUseCase = container.resolve(AuthenticateUseCase);
-// 		const newToken = await authUseCase.execute({
-// 			email,
-// 			password,
-// 		});
+		const authUseCase = container.resolve(AuthenticateUseCase);
+		const newToken = await authUseCase.execute({
+			email,
+			password,
+		});
 
-// 		const output: DTOAuthenticateController.Output = { ...newToken };
+		const output: DTOAuthenticateController.Output = { ...newToken };
 
-// 		return ok(output);
-// 	}
-// }
+		return ok(output);
+	}
 
-// export { AuthenticateController };
+	private async validateInput(
+		input: Omit<DTOAuthenticateController.Input, "userContext">,
+	) {
+		SaveLogs.ControllerTitle("UserCreateController (validateInput)");
+
+		const schema = z.object({
+			email: z.string().email({ message: "Email inválido" }),
+			password: z.string(),
+		});
+
+		await zodValidation(input, schema);
+	}
+}
+
+export { AuthenticateController };

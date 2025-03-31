@@ -271,7 +271,7 @@ export class CognitoProvider implements ICognitoProvider {
 				AllowAdminCreateUserOnly: false, // Defina como true se deseja que apenas administradores possam criar usuários
 				InviteMessageTemplate: {
 					EmailMessage: inviteTemplate,
-					EmailSubject: "Convite de acesso ao GEDOTT",
+					EmailSubject: "Convite de acesso",
 				},
 			},
 			VerificationMessageTemplate: {

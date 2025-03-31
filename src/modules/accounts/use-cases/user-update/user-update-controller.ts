@@ -9,21 +9,20 @@ import type { DTOUserUpdateController } from "./user-update.types.js";
 
 class UserUpdateController extends Controller {
 	override async handle(
-		input: DTOUserUpdateController.Input,
+		request: DTOUserUpdateController.Input,
 	): Promise<DTOUserUpdateController.Output> {
 		SaveLogs.ControllerTitle("UserUpdateController (handle)");
 
-		console.log("input:", input);
-		await this.validateInput(input);
+		await this.validateInput(request);
 
 		const userUpdateUseCase = container.resolve(UserUpdateUseCase);
 
 		await userUpdateUseCase.execute({
-			id: input.id,
+			id: request.id,
 			data: {
-				name: input.name,
-				email: input.email,
-				birthDate: input.birthDate,
+				name: request.name,
+				email: request.email,
+				birthDate: request.birthDate,
 			},
 		});
 

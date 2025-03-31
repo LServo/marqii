@@ -1,1 +1,0 @@
-{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../../../src/shared/infra/containers/providers/cognito-provider/index.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,SAAS,EAAE,MAAM,UAAU,CAAC;AAGrC,OAAO,EAAE,eAAe,EAAE,MAAM,uBAAuB,CAAC;AAExD,MAAM,eAAe,GAAG,SAAS,CAAC,OAAO,CAAC,eAAe,CAAC,CAAC;AAE3D,SAAS,CAAC,gBAAgB,CACzB,iBAAiB,EACjB,eAAe,CACf,CAAC"}

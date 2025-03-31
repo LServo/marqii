@@ -1,7 +1,7 @@
 import { container } from "tsyringe";
 
-import type { ICognitoProvider } from "./ICognitoProvider.js";
-import { CognitoProvider } from "./implementations/CognitoProvider.js";
+import type { ICognitoProvider } from "./cognito-provider.interface.js";
+import { CognitoProvider } from "./cognito-provider.js";
 
 const cognitoProvider = container.resolve(CognitoProvider);
 

@@ -18,7 +18,9 @@ const moduleErrorMessages = {
         USER_NOT_FOUND: "User not found!",
         PROFILE_NOT_FOUND: "Profile not found",
     },
-    CONFLICT: {},
+    CONFLICT: {
+        USER_CONFLICT: "User already exists!",
+    },
     UNPROCESSABLE_ENTITY: {
         AUTH_USER_DISABLED: "User is disabled! Please contact administrator",
     },

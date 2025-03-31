@@ -17,7 +17,6 @@ class UserEntityInput {
     name;
     email;
     birthDate;
-    globalAdmin;
 }
 class UserEntityOutput {
     id;

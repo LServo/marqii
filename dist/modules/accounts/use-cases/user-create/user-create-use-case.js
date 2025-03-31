@@ -10,36 +10,49 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { notFound } from "../../../../shared/application/index.js";
+import { conflict } from "../../../../shared/application/index.js";
 import { SaveLogs } from "../../../../shared/application/save-logs.js";
 import { inject, injectable } from "tsyringe";
 let UserCreateUseCase = class UserCreateUseCase {
     usersRepository;
-    constructor(usersRepository) {
+    cognitoProvider;
+    constructor(usersRepository, cognitoProvider) {
         this.usersRepository = usersRepository;
+        this.cognitoProvider = cognitoProvider;
     }
-    async execute({ name, email, birthDate, globalAdmin, }) {
+    async execute({ name, email, birthDate, }) {
         SaveLogs.UseCaseTitle("UserCreateUseCase (execute)");
         const userAlreadyExists = await this.usersRepository.getUserByEmail({
             email,
         });
-        if (!userAlreadyExists)
-            throw notFound({ error_code: "USER_NOT_FOUND" });
+        if (userAlreadyExists)
+            throw conflict({ error_code: "USER_CONFLICT" });
+        await this.cognitoProvider.adminCreateUser({
+            username: email,
+            userAttributes: [
+                {
+                    Name: "email",
+                    Value: email,
+                },
+            ],
+        });
         const createdUser = await this.usersRepository.createUser({
             name,
             email,
             birthDate,
-            globalAdmin,
             idProvider: "test",
         });
-        const output = { ...createdUser };
+        const output = {
+            ...createdUser,
+        };
         return output;
     }
 };
 UserCreateUseCase = __decorate([
     injectable(),
     __param(0, inject("UsersRepository")),
-    __metadata("design:paramtypes", [Object])
+    __param(1, inject("CognitoProvider")),
+    __metadata("design:paramtypes", [Object, Object])
 ], UserCreateUseCase);
 export { UserCreateUseCase };
 //# sourceMappingURL=user-create-use-case.js.map

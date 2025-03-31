@@ -19,6 +19,7 @@ import {
 	type UserStatusType,
 } from "@aws-sdk/client-cognito-identity-provider";
 
+import type { ICognitoProvider } from "./cognito-provider.interface.js";
 import type {
 	AdminCreateUser,
 	AdminResetUserPassword,
@@ -31,8 +32,7 @@ import type {
 	Logoff,
 	RefreshTokenResponse,
 	SetupPoolConfigs,
-} from "../CognitoProvider.types.js";
-import type { ICognitoProvider } from "../ICognitoProvider.js";
+} from "./cognito-provider.types.js";
 
 export class CognitoProvider implements ICognitoProvider {
 	protected cognitoClient: CognitoIdentityProviderClient;
@@ -109,31 +109,6 @@ export class CognitoProvider implements ICognitoProvider {
 		SaveLogs.ProviderSuccess("CognitoProvider (confirmNewPassword)");
 	}
 
-	async refreshToken({
-		refreshToken,
-	}: RefreshTokenResponse.Input): Promise<RefreshTokenResponse.Output> {
-		SaveLogs.ProviderTitle("CognitoProvider (refreshToken)");
-
-		const command = new InitiateAuthCommand({
-			AuthFlow: "REFRESH_TOKEN_AUTH",
-			ClientId: this.clientId,
-			AuthParameters: {
-				REFRESH_TOKEN: refreshToken,
-			},
-		});
-
-		const response = await this.cognitoClient.send(command);
-
-		SaveLogs.ProviderSuccess("CognitoProvider (refreshToken)");
-
-		return {
-			accessToken: (response.AuthenticationResult?.AccessToken ||
-				"") as JWTToken,
-			refreshToken: (response.AuthenticationResult?.IdToken || "") as JWTToken,
-			expiresIn: response.AuthenticationResult?.ExpiresIn || 0,
-		};
-	}
-
 	async adminUpdateUserAttributes({
 		username,
 		userAttributes,
@@ -153,24 +128,6 @@ export class CognitoProvider implements ICognitoProvider {
 		}
 
 		SaveLogs.ProviderSuccess("CognitoProvider (adminUpdateUserAttributes)");
-	}
-
-	async adminResetUserPassword({
-		userName,
-		tempPassword,
-	}: AdminResetUserPassword.Input): Promise<AdminResetUserPassword.Output> {
-		SaveLogs.ProviderTitle("CognitoProvider (adminResetUserPassword)");
-
-		const command = new AdminSetUserPasswordCommand({
-			UserPoolId: this.userPoolId,
-			Username: userName,
-			Password: tempPassword,
-			Permanent: false,
-		});
-
-		await this.cognitoClient.send(command);
-
-		SaveLogs.ProviderSuccess("CognitoProvider (adminResetUserPassword)");
 	}
 
 	async adminCreateUser({

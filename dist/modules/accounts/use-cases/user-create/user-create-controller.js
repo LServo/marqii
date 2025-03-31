@@ -5,23 +5,17 @@ import { container } from "tsyringe";
 import { z } from "zod";
 import { UserCreateUseCase } from "./user-create-use-case.js";
 class UserCreateController extends Controller {
-    async handle({ name, email, birthDate, globalAdmin, }) {
+    async handle(input) {
         SaveLogs.ControllerTitle("UserCreateController (execute)");
-        const test = await this.validateInput({
-            name,
-            email,
-            birthDate,
-            globalAdmin,
-        });
-        console.log("test:", test);
+        await this.validateInput(input);
+        const { name, email, birthDate } = input;
         const userCreateUseCase = container.resolve(UserCreateUseCase);
-        const result = await userCreateUseCase.execute({
+        const response = await userCreateUseCase.execute({
             name,
             email,
             birthDate,
-            globalAdmin,
         });
-        return created(result);
+        return created(response);
     }
     async validateInput(input) {
         SaveLogs.ControllerTitle("UserCreateController (validateInput)");
@@ -30,10 +24,7 @@ class UserCreateController extends Controller {
                 .string()
                 .min(3, { message: "Nome deve ter no mínimo 3 caracteres" }),
             email: z.string().email({ message: "Email inválido" }),
-            birthDate: z.string().refine((date) => !Number.isNaN(Date.parse(date)), {
-                message: "Data de nascimento inválida",
-            }),
-            globalAdmin: z.boolean(),
+            birthDate: z.string().datetime(),
         });
         await zodValidation(input, schema);
     }

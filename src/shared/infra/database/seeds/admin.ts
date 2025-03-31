@@ -14,7 +14,7 @@ async function main() {
 		birthDate: new Date(),
 		globalAdmin: true,
 		idProvider: "admin" as UUID,
-	} satisfies UserEntityInput;
+	} satisfies UserEntityInput & { globalAdmin: boolean };
 
 	await prisma.users.create({
 		data: userData,

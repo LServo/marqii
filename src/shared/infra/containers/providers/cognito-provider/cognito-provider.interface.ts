@@ -10,7 +10,7 @@ import type {
 	Logoff,
 	RefreshTokenResponse,
 	SetupPoolConfigs,
-} from "./CognitoProvider.types.js";
+} from "./cognito-provider.types.js";
 
 export interface ICognitoProvider {
 	/**
@@ -37,15 +37,6 @@ export interface ICognitoProvider {
 	}: ConfirmNewPassword.Input): Promise<void>;
 
 	/**
-	 * @description Método para atualizar o token de acesso
-	 * @param refreshToken Token de atualização
-	 * @returns Retorna as informações necessárias para autenticação do usuário
-	 */
-	refreshToken({
-		refreshToken,
-	}: RefreshTokenResponse.Input): Promise<RefreshTokenResponse.Output>;
-
-	/**
 	 * @description Método para atualizar os atributos de um usuário. Utilizado - por exemplo - para atualizar o email do usuário
 	 * @param username Username do usuário
 	 * @param userAttributes Atributos do usuário
@@ -55,19 +46,6 @@ export interface ICognitoProvider {
 		username,
 		userAttributes,
 	}: AdminUpdateUserAttributes.Input): Promise<AdminUpdateUserAttributes.Output>;
-
-	/**
-	 * @description Método para resetar a senha de um usuário
-	 * @operational
-	 * - Recebe uma senha temporária e altera a senha do usuário
-	 * @param userName Username do usuário
-	 * @param tempPassword Senha temporária
-	 * @returns Retorna void
-	 */
-	adminResetUserPassword({
-		userName,
-		tempPassword,
-	}: AdminResetUserPassword.Input): Promise<AdminResetUserPassword.Output>;
 
 	/**
 	 * @description Método para criar um usuário

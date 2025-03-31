@@ -1,7 +1,7 @@
 import { SaveLogs } from "../../../../../shared/application/save-logs.js";
 import { prisma } from "../../../../../shared/infra/database/prisma-client.js";
 class PrismaUsersRepository {
-    async createUser({ name, email, birthDate, idProvider, globalAdmin, }) {
+    async createUser({ name, email, birthDate, idProvider, }) {
         SaveLogs.RepositoryTitle("PrismaUsersRepository (createUser)");
         const createdUser = await prisma.users.create({
             data: {
@@ -9,7 +9,6 @@ class PrismaUsersRepository {
                 name,
                 email,
                 birthDate,
-                globalAdmin,
             },
             omit: {
                 idProvider: true,

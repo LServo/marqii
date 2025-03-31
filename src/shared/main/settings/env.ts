@@ -8,6 +8,12 @@ const envSchema = z.object({
 	DATABASE_URL: z.string(),
 	DATABASE_DIRECT: z.string(),
 	TZ: z.string().default("America/Sao_Paulo"),
+
+	AWS_REGION: z.string(),
+	AWS_COGNITO_ID: z.string(),
+	AWS_COGNITO_SECRET: z.string(),
+	AWS_COGNITO_POOL_ID: z.string(),
+	AWS_COGNITO_CLIENT_ID: z.string(),
 });
 
 // Parse and validate environment variables

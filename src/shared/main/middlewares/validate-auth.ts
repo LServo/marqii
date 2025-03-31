@@ -1,97 +1,54 @@
-// import { NextFunction, Request, RequestHandler, Response } from 'express';
+import { CognitoJwtVerifier } from "aws-jwt-verify";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
+import { container } from "tsyringe";
 
-// import { unauthorized } from '@/shared/application';
-// import { logger } from '@/shared/application/logger';
-// import { RouteRules } from '@/shared/application/route_rules';
-// import { SaveLogs } from '@/shared/application/save_logs';
-// import { AuthProvider } from '@/shared/infra/container/providers/AuthProvider/implementations/AuthProvider';
-// import JwtProvider from '@/shared/infra/container/providers/JwtProvider/implementations/JwtProvider';
-// import { redisUserRepository } from '@/shared/infra/database/redis/repositories';
-// import { mockUsersLevels } from '@/shared/infra/database/seeds/mock-users-levels';
-// import { AccountInfo } from '@azure/msal-node';
+import { lightRed } from "@/shared/application/ansi-colors.js";
+import { unauthorized } from "@/shared/application/index.js";
+import { logger } from "@/shared/application/logger.js";
+import { SaveLogs } from "@/shared/application/save-logs.js";
+import JwtProvider from "@/shared/infra/containers/providers/jwt-provider/jwt-provider.js";
 
-// import { middlewareErrorMessages } from '.';
-// import { JWTToken, UUID } from '../@types';
+import { env } from "node:process";
+import type { JWTToken, UUID } from "../@types/index.js";
 
-// type Middleware = (validationRules: RouteRules) => RequestHandler;
+/**
+ * @description Middleware to validate the user's access token
+ * @operational Returns unauthorized if the token is not valid
+ */
+export async function validateAuth(
+	request: Request,
+	_response: Response,
+	next: NextFunction,
+) {
+	SaveLogs.MiddlewareTitle("validateAuth");
 
-// /**
-//  * @description Middleware to validate the user's access token
-//  * @operational Returns unauthorized if the token is not valid
-//  */
-// export const validateAuth: Middleware =
-//     () => async (request: Request, _response: Response, next: NextFunction) => {
-//         SaveLogs.MiddlewareTitle('validateAuth');
+	const hasBearer = request.headers.authorization;
+	if (!hasBearer) throw unauthorized({ error_code: "TOKEN_NOT_FOUND" });
 
-//         const authorization = request.headers.authorization;
-//         if (!authorization)
-//             throw unauthorized({
-//                 error_code: 'TOKEN_NOT_FOUND',
-//                 error_msgs: middlewareErrorMessages,
-//             });
+	try {
+		const jwtProvider = container.resolve(JwtProvider);
 
-//         const extractedToken = authorization.split(' ')[1];
-//         const decodedToken = JwtProvider.verify<{ user_id: UUID }>({
-//             token: extractedToken as JWTToken,
-//         });
-//         if (!decodedToken) {
-//             throw unauthorized({
-//                 error_code: 'TOKEN_NOT_FOUND',
-//                 error_msgs: middlewareErrorMessages,
-//             });
-//         }
+		const token = hasBearer.split("Bearer ")[1];
+		const jwtDecoded = jwtProvider.decode({
+			token: (token || hasBearer) as JWTToken,
+		});
 
-//         const mockUsersLevelsIds = mockUsersLevels.map((user) => user.id);
-//         if (mockUsersLevelsIds.includes(decodedToken.user_id)) {
-//             request.user.id = decodedToken.user_id;
-//             next();
-//             return;
-//         }
+		// Verifier that expects valid access tokens:
+		const verifier = CognitoJwtVerifier.create({
+			userPoolId: env.AWS_COGNITO_POOL_ID,
+			tokenUse: "access",
+			clientId: env.AWS_COGNITO_CLIENT_ID,
+		});
 
-//         const redisUser = await redisUserRepository.fetch(decodedToken.user_id);
-//         if (!redisUser || !redisUser.auth_jwt_token) {
-//             throw unauthorized({
-//                 error_code: 'TOKEN_NOT_FOUND',
-//                 error_msgs: middlewareErrorMessages,
-//             });
-//         }
+		await verifier.verify(jwtDecoded?.accessToken);
+		request.user = {
+			id: jwtDecoded.userId as UUID,
+			accessToken: token,
+		};
+	} catch (error) {
+		logger.error(lightRed, error);
+		throw unauthorized({ error_code: "INVALID_TOKEN" });
+	}
 
-//         const payload = JwtProvider.verify<{
-//             account: AccountInfo;
-//             accessToken: JWTToken;
-//             tokenCache: string;
-//         }>({
-//             token: redisUser.auth_jwt_token as JWTToken,
-//         });
-
-//         const authProvider = new AuthProvider();
-//         const tokenInfos = await authProvider.validateAndRefreshToken({
-//             account: payload.account,
-//             tokenCache: payload.tokenCache,
-//         });
-
-//         const { account, accessToken } = tokenInfos.response;
-//         const tokenCache = tokenInfos.tokenCache;
-
-//         const NineThousandYears = 60 * 60 * 24 * 365 * 1000;
-
-//         const { jwtToken } = JwtProvider.generateToken({
-//             payload: {
-//                 account,
-//                 accessToken,
-//                 tokenCache,
-//             },
-//             expiresIn: NineThousandYears,
-//         });
-
-//         if (jwtToken)
-//             request.auth = {
-//                 token: jwtToken,
-//             };
-
-//         request.user.id = decodedToken.user_id;
-
-//         logger.info(`User ID: ${request.user.id}`);
-
-//         next();
-//     };
+	next();
+}

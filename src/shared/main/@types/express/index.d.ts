@@ -4,9 +4,7 @@ declare namespace Express {
 			id?: string & {
 				__uuidBrand: never;
 			};
-			ip?: string;
-			grants?: string[];
-			groups?: string[];
+			accessToken?: string;
 		};
 	}
 }

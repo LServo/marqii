@@ -18,7 +18,7 @@ class AuthenticateClearController extends Controller {
 	): Promise<HttpResponse> {
 		SaveLogs.ControllerTitle("AuthenticateClearController (handle)");
 
-		await this.validateInput(request);
+		await this.validateInput(request.userContext);
 		const { accessToken } = request;
 
 		const authenticateClearUseCase = container.resolve(
@@ -37,6 +37,7 @@ class AuthenticateClearController extends Controller {
 	) {
 		SaveLogs.ControllerTitle("UserCreateController (validateInput)");
 
+		console.log("input:", input);
 		const schema = z.object({
 			accessToken: z.string().jwt(),
 		});

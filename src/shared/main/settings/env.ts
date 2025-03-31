@@ -14,6 +14,7 @@ const envSchema = z.object({
 	AWS_COGNITO_SECRET: z.string(),
 	AWS_COGNITO_POOL_ID: z.string(),
 	AWS_COGNITO_CLIENT_ID: z.string(),
+	AWS_COGNITO_CLIENT_SECRET: z.string(),
 });
 
 // Parse and validate environment variables

@@ -9,15 +9,15 @@ import type { DTOUserDeleteController } from "./user-delete.types.js";
 
 class UserDeleteController extends Controller {
 	override async handle(
-		input: DTOUserDeleteController.Input,
+		request: DTOUserDeleteController.Input,
 	): Promise<DTOUserDeleteController.Output> {
 		SaveLogs.ControllerTitle("UserDeleteController (handle)");
 
-		await this.validateInput(input);
+		await this.validateInput(request);
 
 		const userDeleteUseCase = container.resolve(UserDeleteUseCase);
 
-		const response = await userDeleteUseCase.execute(input);
+		const response = await userDeleteUseCase.execute(request);
 
 		return ok(response);
 	}

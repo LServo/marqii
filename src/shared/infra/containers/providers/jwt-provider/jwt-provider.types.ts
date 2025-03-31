@@ -18,15 +18,13 @@ export namespace Decode {
      * interface Output {
 		userId: string;
 		payload: unknown;
-		accessTokenAWS: JWTToken;
-		refreshTokenAWS: JWTToken;
+		accessToken: JWTToken;
 	}
      */
 	export interface Output {
 		userId: string;
 		payload: unknown;
-		accessTokenAWS: JWTToken;
-		refreshTokenAWS: JWTToken;
+		accessToken: JWTToken;
 	}
 }
 export namespace Verify {

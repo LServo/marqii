@@ -1,48 +1,41 @@
-// import { inject, injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 
-// import { badRequest, unauthorized } from "@/shared/application";
-// import { SaveLogs } from "@/shared/application/save_logs";
-// import type { ICognitoProvider } from "@/shared/infra/container/providers/CognitoProvider/ICognitoProvider";
-// import type { IJwtProvider } from "@/shared/infra/container/providers/JwtProvider/IJwtProvider";
+import { badRequest, unauthorized } from "@/shared/application/index.js";
+import { SaveLogs } from "@/shared/application/save-logs.js";
+import type { ICognitoProvider } from "@/shared/infra/containers/providers/cognito-provider/cognito-provider.interface.js";
+import type { IJwtProvider } from "@/shared/infra/containers/providers/jwt-provider/jwt-provider.interface.js";
 
-// import { AuthenticateClearRules } from "./AuthenticateClear.rules";
-// import type { DTOAuthenticateClearUseCase } from "./authenticate-clear.types";
+import type { DTOAuthenticateClearUseCase } from "./authenticate-clear.types.js";
 
-// @injectable()
-// class AuthenticateClearUseCase {
-// 	constructor(
-//         @inject('CognitoProvider')
-//         private cognitoProvider: ICognitoProvider,
-//         @inject('JwtProvider')
-//         private jwtProvider: IJwtProvider,
-//     ) {}
-// 	private responses = AuthenticateClearRules.responses;
+@injectable()
+class AuthenticateClearUseCase {
+	constructor(
+		@inject("CognitoProvider")
+		private cognitoProvider: ICognitoProvider,
+		@inject("JwtProvider")
+		private jwtProvider: IJwtProvider,
+	) {}
 
-// 	async execute(params: DTOAuthenticateClearUseCase.Input): Promise<void> {
-// 		SaveLogs.UseCaseTitle("AuthenticateClearUseCase (execute)");
+	async execute(params: DTOAuthenticateClearUseCase.Input): Promise<void> {
+		SaveLogs.UseCaseTitle("AuthenticateClearUseCase (execute)");
 
-// 		try {
-// 			const decodedToken = this.jwtProvider.decode({
-// 				token: params.accessToken,
-// 			});
+		const decodedToken = this.jwtProvider.decode({
+			token: params.accessToken,
+		});
+		console.log("decodedToken:", decodedToken);
 
-// 			await this.cognitoProvider.logoff({
-// 				accessToken: decodedToken.accessTokenAWS,
-// 			});
-// 		} catch (error) {
-// 			if (error?.message === "Invalid Access Token")
-// 				throw badRequest({
-// 					error_msgs: this.responses[400],
-// 					error_code: "ACCESS_TOKEN_BAD_FORMAT",
-// 				});
+		try {
+			await this.cognitoProvider.logoff({
+				accessToken: decodedToken.accessToken,
+			});
+		} catch (error) {
+			if (error?.message === "Invalid Access Token")
+				throw badRequest({ error_code: "ACCESS_TOKEN_BAD_FORMAT" });
 
-// 			if (error?.name === "NotAuthorizedException")
-// 				throw unauthorized({
-// 					error_msgs: this.responses[401],
-// 					error_code: "ACCESS_TOKEN_REVOKED",
-// 				});
-// 		}
-// 	}
-// }
+			if (error?.name === "NotAuthorizedException")
+				throw unauthorized({ error_code: "ACCESS_TOKEN_REVOKED" });
+		}
+	}
+}
 
-// export { AuthenticateClearUseCase };
+export { AuthenticateClearUseCase };

@@ -74,16 +74,10 @@
         // para cada módulo
         "accounts": "serverless",
         // para cada provider
-        "DateProvider": "mappings",
-        "JwtProvider": "mappings",
-        "MailProvider": "mappings",
-        "MicrosoftProvider": "mappings",
-        "AuthProvider": "mappings",
         "FTPProvider": "mappings",
-        "StorageProvider": "mappings",
+        "jwt-provider": "mappings",
+        "cognito-provider": "mappings",
         // para cada pasta em src/shared/infra/config
-        "aws-event-bridge": "Config",
-        "aws-lambda": "Config",
         "aws-cognito": "Config",
     },
 }

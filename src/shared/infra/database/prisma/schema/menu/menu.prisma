@@ -1,0 +1,12 @@
+model Menu {
+    id                   String  @id @default(uuid()) @map("id")
+    accountId            String  @default(uuid())
+    accountIntegrationId String? @default(uuid())
+
+    name        String
+    description String
+
+    Sections Sections[] @relation("menu_sections")
+
+    @@map("menu")
+}

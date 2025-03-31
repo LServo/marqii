@@ -1,0 +1,15 @@
+model Items {
+    id String @id @default(uuid()) @map("id")
+
+    name        String
+    price       Float
+    image       String?
+    description String?
+
+    Section    Sections @relation("section_items", fields: [section_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    section_id String
+
+    Modifiers Modifiers[] @relation("item_modifiers")
+
+    @@map("items")
+}

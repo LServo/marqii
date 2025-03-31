@@ -1,0 +1,13 @@
+model Sections {
+    id String @id @default(uuid()) @map("id")
+
+    name        String
+    description String
+
+    Menu    Menu   @relation("menu_sections", fields: [menu_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    menu_id String
+
+    Items Items[] @relation("section_items")
+
+    @@map("sections")
+}

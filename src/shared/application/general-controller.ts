@@ -1,7 +1,9 @@
+import type { IncomingHttpHeaders } from "node:http";
 import type { HttpResponse } from "./http-responses.js";
 
 export interface RequestInput {
 	[key: string]: unknown;
+	headers: IncomingHttpHeaders;
 	userContext: Express.Request["user"];
 }
 

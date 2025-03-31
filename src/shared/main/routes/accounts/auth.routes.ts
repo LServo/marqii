@@ -1,13 +1,15 @@
-// import { Router } from "express";
+import { Router } from "express";
 
-// import { AuthProviderCallbackController } from "@/modules/auth/useCases/AuthProviderCallback/AuthProviderCallbackController";
-// import { AuthProviderGetURLController } from "@/modules/auth/useCases/AuthProviderGetURL/AuthProviderGetURLController";
+import { AuthenticateController } from "@/modules/accounts/use-cases/authenticate/authenticate-controller.js";
+import { NewPasswordController } from "@/modules/accounts/use-cases/new-password/new-password-controller.js";
+import { expressRouter as execute } from "../../middlewares/index.js";
 
-// import { expressRouter as execute } from "../../middlewares";
+const v1AuthRoutes = Router();
 
-// const v1AuthRoutes = Router();
+v1AuthRoutes.post("/login", execute(new AuthenticateController()));
 
-// v1AuthRoutes.get("/url", execute(new AuthProviderGetURLController()));
-// v1AuthRoutes.get("/callback", execute(new AuthProviderCallbackController()));
+v1AuthRoutes.post("/new-password", execute(new NewPasswordController()));
 
-// export { v1AuthRoutes };
+// v1AuthRoutes.post("/logoff", execute(new AuthenticateClearController()));
+
+export { v1AuthRoutes };

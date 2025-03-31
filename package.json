@@ -1,6 +1,6 @@
 {
   "name": "practice_2025",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "projeto para praticar bases em 2025",
   "main": "src/shared/main/index.ts",
   "type": "module",

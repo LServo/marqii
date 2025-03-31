@@ -85,13 +85,14 @@ class PrismaUsersRepository implements IUsersRepository {
 			where: {
 				email,
 			},
-			select: { id: true },
+			select: { id: true, active: true },
 		});
 
 		if (!userFound) return undefined;
 
 		const output = {
 			id: userFound.id as UUID,
+			active: userFound.active,
 		} satisfies GetUserByEmail.Output;
 
 		return output;

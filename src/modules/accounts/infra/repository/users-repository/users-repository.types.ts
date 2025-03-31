@@ -36,5 +36,6 @@ export namespace GetUserByEmail {
 	type UserEmail = Pick<UserEntity, "email">;
 	export interface Input extends UserEmail {}
 
-	export interface Output extends UserId {}
+	type UserStatus = Pick<UserEntity, "active">;
+	export interface Output extends UserId, UserStatus {}
 }

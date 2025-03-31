@@ -1,0 +1,47 @@
+{
+  "name": "practice_2025",
+  "version": "0.0.1",
+  "description": "projeto para praticar bases em 2025",
+  "main": "src/shared/main/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file=.env .",
+    "clean": "rm -rf dist",
+    "build": "tsc && tsc-alias",
+    "start": "node --env-file=.env dist/shared/main/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "biome check .",
+    "lint:fix": "biome check . --apply",
+    "seed:all": "sh ./src/shared/infra/database/seeds/index.sh"
+  },
+  "prisma": {
+    "schema": "./src/shared/infra/database/prisma/schema",
+    "seed": "npm run seed:all"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/express": "^5.0.1",
+    "@types/module-alias": "^2.0.4",
+    "@types/node": "^22.13.14",
+    "prisma": "^6.5.0",
+    "tsc-alias": "^1.8.13",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.777.0",
+    "@prisma/client": "^6.5.0",
+    "express": "^4.21.2",
+    "express-async-errors": "^3.1.1",
+    "express-list-endpoints": "^7.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "module-alias": "^2.2.3",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0",
+    "reflect-metadata": "^0.2.2",
+    "tsyringe": "^4.8.0",
+    "zod": "^3.24.2"
+  }
+}

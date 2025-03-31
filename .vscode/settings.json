@@ -1,0 +1,89 @@
+{
+    "editor.fontLigatures": true,
+    "editor.rulers": [
+        80,
+        120
+    ],
+    "editor.tabSize": 4,
+    "workbench.tree.indent": 16,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "quickfix.biome": "explicit",
+        "source.organizeImports.biome": "explicit",
+        "source.fixAll.biome": "explicit"
+    },
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "[html]": {
+        "editor.defaultFormatter": "biomejs.biome"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[prisma]": {
+        "editor.defaultFormatter": "Prisma.prisma"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "biomejs.biome"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "biomejs.biome"
+    },
+    "workbench.iconTheme": "material-icon-theme",
+    "material-icon-theme.folders.color": "#ef5350",
+    "material-icon-theme.files.associations": {
+        "tsconfig.json": "tune",
+        "package.json": "Nodejs",
+        "swagger.json": "lib",
+        "*.swagger.json": "lib",
+        "*.rules.ts": "Settings",
+        "*.types.ts": "Typescript-def",
+        "*.interface.ts": "Typescript-def",
+        "*.entity.ts": "Typescript-def",
+        "*.bak": "Changelog",
+        "*.dbml": "3d",
+        "*.redis.ts": "Red",
+        ".env": "tune",
+        ".env.local": "tune",
+        ".env.hml": "tune",
+        ".env.dev": "tune",
+        ".env.prod": "tune",
+        // **.json -> sobescreve qualquer especificação
+        // *.json -> sobescreve todos os arquivos .json sem especificação
+    },
+    "material-icon-theme.folders.associations": {
+        "infra": "app",
+        "entities": "class",
+        "schemas": "class",
+        "repositories": "mappings",
+        "http": "container",
+        "migrations": "tools",
+        "modules": "components",
+        "implementations": "core",
+        "dtos": "typescript",
+        "default": "core",
+        "main": "core",
+        "*": "core",
+        "domain": "class",
+        "swagger": "meta",
+        "seeds": "Ci",
+        "use-cases": "controller",
+        "digest-rules": "controller",
+        "erd": "Context",
+        "application": "context",
+        // para cada módulo
+        "accounts": "serverless",
+        // para cada provider
+        "DateProvider": "mappings",
+        "JwtProvider": "mappings",
+        "MailProvider": "mappings",
+        "MicrosoftProvider": "mappings",
+        "AuthProvider": "mappings",
+        "FTPProvider": "mappings",
+        "StorageProvider": "mappings",
+        // para cada pasta em src/shared/infra/config
+        "aws-event-bridge": "Config",
+        "aws-lambda": "Config",
+        "aws-cognito": "Config",
+    },
+}

@@ -9,15 +9,15 @@ import type { DTOUserReadController } from "./user-read.types.js";
 
 class UserReadController extends Controller {
 	override async handle(
-		input: DTOUserReadController.Input,
+		request: DTOUserReadController.Input,
 	): Promise<DTOUserReadController.Output> {
 		SaveLogs.ControllerTitle("UserReadController (handle)");
 
-		await this.validateInput(input);
+		await this.validateInput(request);
 
 		const userReadUseCase = container.resolve(UserReadUseCase);
 
-		const response = await userReadUseCase.execute(input);
+		const response = await userReadUseCase.execute(request);
 
 		return ok(response);
 	}

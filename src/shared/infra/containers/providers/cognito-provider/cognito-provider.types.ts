@@ -20,13 +20,11 @@ export namespace AuthLogin {
      * @example
      * interface Output {
         accessToken: JWTToken;
-        refreshToken: JWTToken;
         expiresIn: number;
     }
      */
 	export interface Output {
 		accessToken: JWTToken;
-		refreshToken: JWTToken;
 		expiresIn: number;
 	}
 }
@@ -48,33 +46,6 @@ export namespace ConfirmNewPassword {
 	}
 }
 
-export namespace RefreshTokenResponse {
-	/**
-	 * Interface for the input to the `refreshToken` method of `CognitoProvider`
-	 * @example
-	 * {
-	 *   refreshToken: "example_refresh_token"
-	 * }
-	 */
-	export interface Input {
-		refreshToken: JWTToken;
-	}
-	/**
-	 * Interface for the output of the `refreshToken` method of `CognitoProvider`
-	 * @example
-	 * {
-	 *   accessToken: "example_access_token",
-	 *   refreshToken: "example_refresh_token",
-	 *   expiresIn: 3600
-	 * }
-	 */
-	export interface Output {
-		accessToken: JWTToken;
-		refreshToken: JWTToken;
-		expiresIn: number;
-	}
-}
-
 export namespace AdminCreateUser {
 	export interface Input {
 		username: string;
@@ -85,15 +56,6 @@ export namespace AdminCreateUser {
 		username: string;
 		userStatus: UserStatusType;
 	}
-}
-
-export namespace AdminResetUserPassword {
-	export interface Input {
-		userName: string;
-		tempPassword: string;
-	}
-
-	export type Output = undefined;
 }
 
 export namespace AdminUpdateUserAttributes {

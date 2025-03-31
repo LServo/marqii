@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { serverError } from "@/shared/application/index.js";
 import { logger } from "@/shared/application/logger.js";
 import { SaveLogs } from "@/shared/application/save-logs.js";
@@ -19,10 +20,10 @@ import {
 	type UserStatusType,
 } from "@aws-sdk/client-cognito-identity-provider";
 
+import { env } from "node:process";
 import type { ICognitoProvider } from "./cognito-provider.interface.js";
 import type {
 	AdminCreateUser,
-	AdminResetUserPassword,
 	AdminUpdateUserAttributes,
 	AuthLogin,
 	ConfirmNewPassword,
@@ -30,7 +31,6 @@ import type {
 	EnableUser,
 	GetUser,
 	Logoff,
-	RefreshTokenResponse,
 	SetupPoolConfigs,
 } from "./cognito-provider.types.js";
 
@@ -38,17 +38,19 @@ export class CognitoProvider implements ICognitoProvider {
 	protected cognitoClient: CognitoIdentityProviderClient;
 	private readonly userPoolId: string;
 	private readonly clientId: string;
+	private readonly clientSecret: string;
 
 	constructor() {
 		this.cognitoClient = new CognitoIdentityProviderClient({
-			region: process.env.AWS_REGION,
+			region: env.AWS_REGION,
 			credentials: {
-				accessKeyId: process.env.AWS_COGNITO_ID,
-				secretAccessKey: process.env.AWS_COGNITO_SECRET,
+				accessKeyId: env.AWS_COGNITO_ID,
+				secretAccessKey: env.AWS_COGNITO_SECRET,
 			},
 		});
-		this.userPoolId = process.env.AWS_COGNITO_POOL_ID;
-		this.clientId = process.env.AWS_COGNITO_CLIENT_ID;
+		this.userPoolId = env.AWS_COGNITO_POOL_ID;
+		this.clientId = env.AWS_COGNITO_CLIENT_ID;
+		this.clientSecret = env.AWS_COGNITO_CLIENT_SECRET;
 	}
 
 	async authLogin({
@@ -57,6 +59,12 @@ export class CognitoProvider implements ICognitoProvider {
 	}: AuthLogin.Input): Promise<AuthLogin.Output> {
 		SaveLogs.ProviderTitle("CognitoProvider (authLogin)");
 
+		const secretHash = this.generateSecretHash(
+			email,
+			this.clientId,
+			this.clientSecret,
+		);
+
 		const command = new AdminInitiateAuthCommand({
 			UserPoolId: this.userPoolId,
 			ClientId: this.clientId,
@@ -64,6 +72,7 @@ export class CognitoProvider implements ICognitoProvider {
 			AuthParameters: {
 				USERNAME: email,
 				PASSWORD: password,
+				SECRET_HASH: secretHash,
 			},
 		});
 
@@ -73,7 +82,6 @@ export class CognitoProvider implements ICognitoProvider {
 
 		return {
 			accessToken: response?.AuthenticationResult?.AccessToken as JWTToken,
-			refreshToken: response?.AuthenticationResult?.RefreshToken as JWTToken,
 			expiresIn: response?.AuthenticationResult?.ExpiresIn,
 		};
 	}
@@ -85,6 +93,12 @@ export class CognitoProvider implements ICognitoProvider {
 	}: ConfirmNewPassword.Input): Promise<void> {
 		SaveLogs.ProviderTitle("CognitoProvider (confirmNewPassword)");
 
+		const secretHash = this.generateSecretHash(
+			email,
+			this.clientId,
+			this.clientSecret,
+		);
+
 		const command = new AdminInitiateAuthCommand({
 			UserPoolId: this.userPoolId,
 			ClientId: this.clientId,
@@ -92,6 +106,7 @@ export class CognitoProvider implements ICognitoProvider {
 			AuthParameters: {
 				USERNAME: email,
 				PASSWORD: password,
+				SECRET_HASH: secretHash,
 			},
 		});
 
@@ -268,8 +283,8 @@ export class CognitoProvider implements ICognitoProvider {
 			EmailConfiguration: {
 				// CONFIGURAÇÕES SANDBOX
 				EmailSendingAccount: "COGNITO_DEFAULT",
-				SourceArn:
-					"arn:aws:ses:sa-east-1:423521828233:identity/projetosgdot.rs@paipe.co",
+				// SourceArn:
+				// 	"arn:aws:ses:sa-east-1:423521828233:identity/projetosgdot.rs@paipe.co",
 			},
 			DeletionProtection: "ACTIVE",
 		} satisfies UpdateUserPoolCommandInput;
@@ -310,5 +325,16 @@ export class CognitoProvider implements ICognitoProvider {
 			.split("")
 			.sort(() => Math.random() - 0.5)
 			.join("");
+	}
+
+	private generateSecretHash(
+		username: string,
+		clientId: string,
+		clientSecret: string,
+	): string {
+		return crypto
+			.createHmac("SHA256", clientSecret)
+			.update(username + clientId)
+			.digest("base64");
 	}
 }

@@ -1,6 +1,5 @@
 import type {
 	AdminCreateUser,
-	AdminResetUserPassword,
 	AdminUpdateUserAttributes,
 	AuthLogin,
 	ConfirmNewPassword,
@@ -8,7 +7,6 @@ import type {
 	EnableUser,
 	GetUser,
 	Logoff,
-	RefreshTokenResponse,
 	SetupPoolConfigs,
 } from "./cognito-provider.types.js";
 

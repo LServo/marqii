@@ -6,7 +6,10 @@ interface IMenusRepository {
 		description,
 	}: CreateMenu.Input): Promise<CreateMenu.Output>;
 
-	getFullMenu({ id }: GetFullMenu.Input): Promise<GetFullMenu.Output>;
+	getFullMenu({
+		id,
+		transactionId,
+	}: GetFullMenu.Input): Promise<GetFullMenu.Output>;
 }
 
 export type { IMenusRepository };

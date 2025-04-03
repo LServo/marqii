@@ -1,4 +1,4 @@
-import { prisma } from "@/shared/infra/database/prisma-client.js";
+import { TransactionManager } from "@/shared/infra/database/transaction-manager.js";
 import type { UUID } from "@/shared/main/@types/index.js";
 import type { IMenusRepository } from "./menus-repository-interface.js";
 import type { CreateMenu, GetFullMenu } from "./menus-repository.types.js";
@@ -7,8 +7,11 @@ class MenusRepository implements IMenusRepository {
 	async createMenu({
 		name,
 		description,
+		transactionId,
 	}: CreateMenu.Input): Promise<CreateMenu.Output> {
-		const createdMenu = await prisma.menu.create({
+		const prismaClient = TransactionManager.getClient(transactionId);
+
+		const createdMenu = await prismaClient.menu.create({
 			data: {
 				name,
 				description,
@@ -25,11 +28,14 @@ class MenusRepository implements IMenusRepository {
 		return output;
 	}
 
-	async getFullMenu({ id }: GetFullMenu.Input): Promise<GetFullMenu.Output> {
-		const fullMenu = await prisma.menu.findFirst({
-			where: {
-				id: id,
-			},
+	async getFullMenu({
+		id,
+		transactionId,
+	}: GetFullMenu.Input): Promise<GetFullMenu.Output> {
+		const prismaClient = TransactionManager.getClient(transactionId);
+
+		const fullMenu = await prismaClient.menu.findFirst({
+			where: { id },
 			include: {
 				Sections: {
 					include: {
@@ -43,7 +49,9 @@ class MenusRepository implements IMenusRepository {
 			},
 		});
 
-		return fullMenu;
+		const output = fullMenu as GetFullMenu.Output;
+
+		return output;
 	}
 }
 

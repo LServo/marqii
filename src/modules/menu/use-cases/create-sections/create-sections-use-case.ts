@@ -14,9 +14,9 @@ class CreateSectionsUseCase {
 	async execute({
 		sections,
 		menu_id,
+		transactionId,
 	}: DTOCreateSectionsUseCase.Input): Promise<DTOCreateSectionsUseCase.Output> {
 		SaveLogs.UseCaseTitle("CreateSectionsUseCase (execute");
-
 		const mappedItems = sections.map((section) => {
 			return {
 				id: section.id,
@@ -28,6 +28,7 @@ class CreateSectionsUseCase {
 
 		await this.sectionsRepository.createSections({
 			sections: mappedItems,
+			transactionId,
 		});
 	}
 }

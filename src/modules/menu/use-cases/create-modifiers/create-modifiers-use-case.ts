@@ -13,6 +13,7 @@ class CreateModifiersUseCase {
 
 	async execute({
 		modifiers,
+		transactionId,
 	}: DTOCreateModifiersUseCase.Input): Promise<DTOCreateModifiersUseCase.Output> {
 		SaveLogs.UseCaseTitle("CreateModifiersUseCase (execute");
 
@@ -26,6 +27,7 @@ class CreateModifiersUseCase {
 
 		await this.modifiersRepository.createModifier({
 			modifiers: mappedItems,
+			transactionId,
 		});
 	}
 }

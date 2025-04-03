@@ -12,11 +12,13 @@ class ReadFullMenuUseCase {
 
 	async execute({
 		id,
+		transactionId,
 	}: DTOReadFullMenuUseCase.Input): Promise<DTOReadFullMenuUseCase.Output> {
 		SaveLogs.UseCaseTitle("ReadFullMenuUseCase (execute");
 
 		const fullMenu = this.menusRepository.getFullMenu({
 			id,
+			transactionId,
 		});
 
 		return fullMenu;

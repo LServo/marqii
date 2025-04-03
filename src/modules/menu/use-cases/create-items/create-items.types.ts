@@ -6,6 +6,7 @@ import type {
 export namespace DTOCreateItemsUseCase {
 	export interface Input {
 		items: ItemsEntityInput[];
+		transactionId: string;
 	}
 
 	export interface Output extends ItemsEntityOutput {}

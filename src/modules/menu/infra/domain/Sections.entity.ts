@@ -26,7 +26,7 @@ class SectionsEntityOutput implements SectionsEntity {
 }
 
 class SectionsEntityFull extends SectionsEntityOutput {
-	Items: ItemsEntityFull;
+	Items: ItemsEntityFull[];
 }
 
 export {

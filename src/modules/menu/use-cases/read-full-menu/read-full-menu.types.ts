@@ -5,7 +5,9 @@ import type {
 
 export namespace DTOReadFullMenuUseCase {
 	type MenuId = Pick<MenuEntity, "id">;
-	export interface Input extends MenuId {}
+	export interface Input extends MenuId {
+		transactionId: string;
+	}
 
 	export interface Output extends MenuEntityFull {}
 }

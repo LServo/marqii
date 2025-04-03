@@ -8,44 +8,57 @@ import type {
 import {
 	type HttpResponse,
 	InputValidationError,
+	AppError
 } from "@/shared/application/index.js";
 import { SaveLogs } from "@/shared/application/save-logs.js";
 
-interface ErrorType {
-	error?: string;
-	message?: string;
-	detailed?: string;
-	statusCode?: number;
-}
-
 export const errorHandler: ErrorRequestHandler = (
-	err: HttpResponse | ErrorType,
+	err: HttpResponse | AppError | Error,
 	_request: Request,
 	response: Response,
 	_next: NextFunction,
 ) => {
-	const serverError = !err.statusCode || err.statusCode === 500;
-	const inputValidationError = err instanceof InputValidationError;
+	// Verificar tipo de erro
+	const isAppError = err instanceof AppError;
+	const isInputValidationError = err instanceof InputValidationError;
+	const isHttpResponse = 'statusCode' in err && 'data' in err;
+	
+	// Extrair dados do erro
+	let statusCode = 500;
+	let errorMessage = "Internal Server Error";
+	let errorCode = "INTERNAL_SERVER_ERROR";
+	let detailedError = null;
 
-	// biome-ignore lint/complexity/useLiteralKeys: Será refatorado em breve
-	const message = err["data"]?.message || err["message"] || null;
-	// biome-ignore lint/complexity/useLiteralKeys: Será refatorado em breve
-	const detailed = err["data"]?.detailed || err["detailed"] || null;
-	// biome-ignore lint/complexity/useLiteralKeys: Será refatorado em breve
-	const errorCode = err["data"]?.error || err["error"] || null;
-	const statusCode = (
-		serverError ? 500 : inputValidationError ? 422 : err.statusCode
-	) as number;
+	if (isAppError) {
+		statusCode = 400; // Padrão para AppError
+		errorMessage = err.message;
+		errorCode = err.error;
+		detailedError = err.detailed;
+	} else if (isInputValidationError) {
+		statusCode = err.statusCode || 422;
+		errorMessage = err.message;
+		errorCode = err.error;
+		detailedError = err.detailed;
+	} else if (isHttpResponse) {
+		const httpResponse = err as HttpResponse;
+		statusCode = httpResponse.statusCode;
+		const responseData = httpResponse.data as any;
+		
+		errorMessage = responseData.message || "Error";
+		errorCode = responseData.error || "ERROR";
+		detailedError = responseData.detailed || null;
+	} else {
+		// Erro genérico
+		errorMessage = err.message || "Unknown error";
+	}
 
-	const data = {};
-	// biome-ignore lint/complexity/useLiteralKeys: Será refatorado em breve
-	if (message) data["message"] = message;
-	// biome-ignore lint/complexity/useLiteralKeys: Será refatorado em breve
-	if (detailed) data["detailed"] = detailed;
-	// biome-ignore lint/complexity/useLiteralKeys: Será refatorado em breve
-	data["error"] =
-		!errorCode || serverError ? "Internal Server Error" : errorCode;
+	// Montar resposta
+	const responseData = {
+		error: errorCode,
+		message: errorMessage,
+		...(detailedError ? { detailed: detailedError } : {})
+	};
 
-	SaveLogs.ErrorHandler(statusCode, data);
-	response.status(statusCode).json(data);
+	SaveLogs.ErrorHandler(statusCode, responseData);
+	response.status(statusCode).json(responseData);
 };

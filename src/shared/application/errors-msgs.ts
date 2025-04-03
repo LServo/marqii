@@ -1,4 +1,5 @@
 import { accountsErrorMessages } from "../../modules/accounts/infra/error-msgs.js";
+import { menuErrorMessages } from "../../modules/menu/infra/error-msgs.js";
 import { middlewareErrorMessages } from "../main/middlewares/index.js";
 
 export interface TModuleErrors {
@@ -44,5 +45,6 @@ export interface TErrorMsg {
 
 export const errorMsgs = {
 	...accountsErrorMessages,
+	...menuErrorMessages,
 	...middlewareErrorMessages,
 } satisfies TErrorMsg;

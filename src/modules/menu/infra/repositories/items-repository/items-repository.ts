@@ -1,10 +1,15 @@
-import { prisma } from "@/shared/infra/database/prisma-client.js";
+import { TransactionManager } from "@/shared/infra/database/transaction-manager.js";
 import type { IItemsRepository } from "./items-repository-interface.js";
 import type { CreateItems } from "./items-repository.types.js";
 
 class ItemsRepository implements IItemsRepository {
-	async createItems({ items }: CreateItems.Input): Promise<CreateItems.Output> {
-		await prisma.items.createMany({
+	async createItems({
+		items,
+		transactionId,
+	}: CreateItems.Input): Promise<CreateItems.Output> {
+		const prismaClient = TransactionManager.getClient(transactionId);
+
+		await prismaClient.items.createMany({
 			data: items,
 		});
 	}

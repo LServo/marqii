@@ -16,8 +16,9 @@ import { logger } from "./logger.js";
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 class SaveLogs {
 	static ProviderSuccess(name: string) {
-		logger.info(lightGreen, `[controller] ${name}`);
+		logger.info(lightGreen, `[provider] ${name}`);
 	}
+
 	static ControllerTitle(name: string) {
 		logger.info(lightYellow, `[controller] ${name}`);
 	}
@@ -26,8 +27,8 @@ class SaveLogs {
 		logger.info(lightYellow, `[use_case] ${name}`);
 	}
 
-	static UseCaseFunction(name: string) {
-		logger.info(lightMagenta, `[use_case] ${name}`);
+	static ServiceTitle(name: string) {
+		logger.info(lightMagenta, `[service] ${name}`);
 	}
 
 	static RepositoryTitle(name: string) {

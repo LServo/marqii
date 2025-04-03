@@ -13,6 +13,7 @@ class CreateItemsUseCase {
 
 	async execute({
 		items,
+		transactionId,
 	}: DTOCreateItemsUseCase.Input): Promise<DTOCreateItemsUseCase.Output> {
 		SaveLogs.UseCaseTitle("CreateItemsUseCase (execute");
 
@@ -29,6 +30,7 @@ class CreateItemsUseCase {
 
 		const createdItem = this.itemsRepository.createItems({
 			items: mappedItems,
+			transactionId,
 		});
 
 		return createdItem;

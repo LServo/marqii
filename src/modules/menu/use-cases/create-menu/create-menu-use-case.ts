@@ -13,10 +13,15 @@ class CreateMenuUseCase {
 	async execute({
 		name,
 		description,
+		transactionId,
 	}: DTOCreateMenuUseCase.Input): Promise<DTOCreateMenuUseCase.Output> {
 		SaveLogs.UseCaseTitle("CreateMenuUseCase (execute");
 
-		const createdMenu = this.menusRepository.createMenu({ name, description });
+		const createdMenu = this.menusRepository.createMenu({
+			name,
+			description,
+			transactionId,
+		});
 
 		return createdMenu;
 	}

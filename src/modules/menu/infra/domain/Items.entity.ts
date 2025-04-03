@@ -33,7 +33,7 @@ class ItemsEntityOutput implements ItemsEntity {
 }
 
 class ItemsEntityFull extends ItemsEntityOutput {
-	Modifiers: ModifiersEntityOutput;
+	Modifiers: ModifiersEntityOutput[];
 }
 
 export { ItemsEntity, ItemsEntityInput, ItemsEntityOutput, ItemsEntityFull };
